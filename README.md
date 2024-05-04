@@ -15,7 +15,7 @@ Hence, this dataset includes 164,900 `product_id`s.
 
 As supplementary data, we also provide data related to the other products appearing in at least 2 query judgements in the data of Task 1 with `product_locale` as 'us', amounting to 27,139 products, to further increase the coverage of the data for additional applications that go beyond the ESCI benchmark.
 
-## Image URL Scraping:
+## Image URL Scraping
 
 We scraped 156,545 (~95% of the 164,900 `product_id`'s) `image_url`s from the Amazon website. Products lacking `image_url`s either failed to fetch a valid product page (usually if Amazon no longer sells the product) or displayed a default "No image available" image.
 
@@ -23,13 +23,13 @@ Note: 442 product `image_url`s are a default digital video image, `'https://m.me
 
 The SQID dataset also includes a supplementary file covering 27,139 more products.
 
-### Image Embeddings:
+### Image Embeddings
 
 We extracted image embeddings for each of the images using the [OpenAI CLIP model from HuggingFace](https://huggingface.co/openai/clip-vit-large-patch14), specifically clip-vit-large-patch14, with all default settings. 
 
-### Query Embeddings:
+### Text Embeddings
 
-For each query in the SQD Test Set, we extracted text embeddings using the same CLIP model. These can be useful to benchmark a baseline product search method where both text and images share the same embedding space.
+For each query and each product in the SQD Test Set, we extracted text embeddings using the same CLIP model and based on the query text and product title. These can be useful to benchmark a baseline product search method where both text and images share the same embedding space.
 
 ## Files
 The `sqid` directory contains 4 files:
@@ -41,6 +41,38 @@ The `sqid` directory contains 4 files:
   - This file contains the CLIP text embedding features for queries in the dataset
 - `supp_product_image_urls.csv`
   - This file contains supplementary data as image URLs for an additional set of products not included in the test set and increasing the coverage of the data
+
+## Code snippets to get CLIP features
+
+SQID includes embeddings extracted using [OpenAI CLIP model from HuggingFace](https://huggingface.co/openai/clip-vit-large-patch14) (clip-vit-large-patch14). We provide below code snippets in Python to extract such embeddings, using either the model from HuggingFace or using [Replicate](https://replicate.com/).
+
+### Using CLIP model from HuggingFace
+
+```
+from PIL import Image
+import requests
+from transformers import CLIPModel, CLIPProcessor
+
+model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14")
+processor = CLIPProcessor.from_pretrained("openai/clip-vit-large-patch14")
+
+image = Image.open(requests.get('https://m.media-amazon.com/images/I/71fv4Dv5RaL._AC_SY879_.jpg', stream=True).raw)
+inputs = processor(images=[image], return_tensors="pt", padding=True)
+image_embds = model.get_image_features(pixel_values=inputs["pixel_values"])
+```
+
+### Using Replicate
+```
+import replicate
+
+client = replicate.Client(api_token=REPLICATE_API_KEY)
+output = client.run(
+    "andreasjansson/clip-features:71addf5a5e7c400e091f33ef8ae1c40d72a25966897d05ebe36a7edb06a86a2c",
+    input={
+        "inputs": 'https://m.media-amazon.com/images/I/71fv4Dv5RaL._AC_SY879_.jpg'
+    }
+)
+```
 
 ## Citation
 To use this dataset, please cite the following paper:
