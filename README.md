@@ -10,7 +10,7 @@ The image-enriched SQID dataset can be used to support research on improving pro
 This dataset extends the Shopping Queries Dataset (SQD) by including image information and visual embeddings for each product, as well as text embeddings for the associated queries which can be used for baseline product ranking benchmarking. 
 
 ### Product Sampling
-We limited this dataset to the subset of the SQD where `small_version` is 1 (the reduced version of the dataset for Task 1), `split` is `test` (test set of the dataset), and `product_locale` is 'us'. 
+We limited this dataset to the subset of the SQD where `small_version` is 1 (the reduced version of the dataset for Task 1), `split` is 'test' (test set of the dataset), and `product_locale` is 'us'. 
 Hence, this dataset includes 164,900 `product_id`s.
 
 As supplementary data, we also provide data related to the other products appearing in at least 2 query judgements in the data of Task 1 with `product_locale` as 'us', amounting to 27,139 products, to further increase the coverage of the data for additional applications that go beyond the ESCI benchmark.
